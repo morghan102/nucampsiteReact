@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
-import { Card, CardImg, CardText, CardBody, CardTitle } from 'reactstrap';
+import { Card, CardImg, CardText, CardBody, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Label } from 'reactstrap';
+import { Link } from 'react-router-dom';
+import { LocalForm, Control, Errors } from 'react-redux-form';
 
+// validation logic
+const minLength = len => val => val && (val.length >= len);
+const maxLength = len => val => !val || (val.length <= len);
 
-class CampsiteInfo extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {};
-    // }
-
-    renderCampsite(campsite) {
+function RenderCampsite({campsite}) {
         return(
             <div className="col-md-5 m-1">
                 <Card>
                     <CardImg top src={campsite.image} alt={campsite.name} />
                     <CardBody>
-                        <CardTitle>{campsite.name}</CardTitle>
                         <CardText>{campsite.description}</CardText>
                     </CardBody>
                 </Card>
@@ -22,48 +20,164 @@ class CampsiteInfo extends Component {
         );
     };
 
-    renderComments(comments) {
-        if (comments) {
-            return(
-                <div className="col-md-5 m-1">
-                    <h4>Comments</h4>
-                    {comments.map(comm => {
-                        return (
-                        <div key={comm.id}>
-                            <p>{comm.text} <br />
-                                -- {comm.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comm.date)))}
-                            </p>
-                        </div>
-                        );
-                        }
-                        )}
+function RenderComments({comments}) {
+    if (comments) {
+        return(
+            <div className="col-md-5 m-1">
+                <h4>Comments</h4>
+                {comments.map(comm => {
+                    return (
+                    <div key={comm.id}>
+                        <p>{comm.text} <br />
+                            -- {comm.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comm.date)))}
+                        </p>
+                    </div>
+                    );
+                    }
+                    )}
+                <CommentForm />
+            </div>
+        );
+    }
+    return <div/>
+};
+
+function CampsiteInfo(props) {
+    if (props.campsite) {
+        return(
+            <div className="container">
+                <div className="row">
+                <div className="col">
+                    <Breadcrumb>
+                        <BreadcrumbItem><Link to="/directory">Directory</Link></BreadcrumbItem>
+                        <BreadcrumbItem active>{props.campsite.name}</BreadcrumbItem>
+                    </Breadcrumb>
+                    <h2>{props.campsite.name}</h2>
+                    <hr />
                 </div>
-            );
-        }
-        return <div/>
-    };
+            </div>
+
+
+                <div className="row">
+                    {/* {renderCampsite(this.props.campsite)} this gets altered bc its no longer a func of a class component*/}
+                    <RenderCampsite campsite={props.campsite} />
+                    <RenderComments comments={props.comments} />
+                </div>
+            </div>
+        );
+    } else {
+        return(
+        <div />
+        );
+    }
+};
+
+
+class CommentForm extends React.Component {
+
+    constructor(props) {
+        super(props);        
+        this.state = {
+            isModalOpen: false,
+            touched: {
+                author: false
+            }
+        };
+        this.toggleModal = this.toggleModal.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    toggleModal() {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        });
+    }
+    
+    handleSubmit(values) {
+        this.toggleModal();
+        console.log('Current State is: ' + JSON.stringify(values));
+        alert('Current State is: ' + JSON.stringify(values));
+    }
 
     render() {
-        if (this.props.campsite) {
-            return(
-                <div className="container">
-                    <div className="row">
-                        {this.renderCampsite(this.props.campsite)}
-                        {this.renderComments(this.props.campsite.comments)}
-                    </div>
-                </div>
-            );
-        } else {
-            return(
-            <div />
-            );
-        }
-    };
+        return (
+            <div>
+                <Button outline onClick={this.toggleModal}>
+                    <i className="fa fa-pencil fa-lg" /> Submit Comment
+                </Button>
 
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+                    <ModalBody>
+                    <LocalForm onSubmit={values => this.handleSubmit(values)}>
+                            <div className="form-group">
+                                <Label htmlFor="rating">Rating</Label>
+                                <Control.select 
+                                    model=".rating" 
+                                    id="rating" 
+                                    name="rating"
+                                    className="form-control">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </Control.select>
+                            </div>
+                            <div className="form-group">
+                                <Label htmlFor="author">Your Name</Label>
+                                <Control.text 
+                                    model=".author" 
+                                    id="author" 
+                                    name="author"
+                                    placeholder="Your Name"
+                                    className="form-control"
+                                    validators={{
+                                        minLength: minLength(2),
+                                        maxLength: maxLength(15)
+                                    }}
+                                />
+                                <Errors 
+                                    className="text-danger"
+                                    model=".author"
+                                    show="touched"
+                                    component="div"
+                                    messages={{
+                                        minLength: 'Must be at least 2 chars',
+                                        maxLength: 'Must be 15 chars or less.'
+                                    }}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <Label htmlFor="text">Comment</Label>
+                                <Control.textarea model=".text" id="text" name="text"
+                                    rows="6"
+                                    className="form-control"
+                                    validators={{
+                                        minLength: minLength(10)
+                                    }}
+                                />
+                                <Errors 
+                                    className="text-danger"
+                                    model=".text"
+                                    show="touched"
+                                    component="div"
+                                    messages={{
+                                        minLength: 'Must be at least 10 chars'
+                                    }}
+                                />
+                            </div>
 
-
+                            <Button type="submit" color="primary">
+                                Submit
+                            </Button>
+                        </LocalForm>
+                    </ModalBody>
+                </Modal>
+            </div>
+        );
+    }
 }
 
-export default CampsiteInfo;
 
-// this is the campsiteinfo component
+export default CampsiteInfo;
