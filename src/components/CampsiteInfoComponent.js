@@ -20,27 +20,27 @@ function RenderCampsite({campsite}) {
         );
     };
 
-function RenderComments({comments}) {
-    if (comments) {
-        return(
-            <div className="col-md-5 m-1">
-                <h4>Comments</h4>
-                {comments.map(comm => {
-                    return (
-                    <div key={comm.id}>
-                        <p>{comm.text} <br />
-                            -- {comm.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comm.date)))}
-                        </p>
-                    </div>
-                    );
-                    }
-                    )}
-                <CommentForm />
-            </div>
-        );
-    }
-    return <div/>
-};
+    function RenderComments({comments, addComment, campsiteId}) {
+        if (comments) {
+            return(
+                <div className="col-md-5 m-1">
+                    <h4>Comments</h4>
+                    {comments.map(comm => {
+                        return (
+                        <div key={comm.id}>
+                            <p>{comm.text} <br />
+                                -- {comm.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comm.date)))}
+                            </p>
+                        </div>
+                        );
+                        }
+                        )}
+                    <CommentForm campsiteId={campsiteId} addComment={addComment} />
+                </div>
+            );
+        }
+        return <div/>
+    };
 
 function CampsiteInfo(props) {
     if (props.campsite) {
@@ -61,7 +61,11 @@ function CampsiteInfo(props) {
                 <div className="row">
                     {/* {renderCampsite(this.props.campsite)} this gets altered bc its no longer a func of a class component*/}
                     <RenderCampsite campsite={props.campsite} />
-                    <RenderComments comments={props.comments} />
+                    <RenderComments 
+                        comments={props.comments} 
+                        addComment={props.addComment}
+                        campsiteId={props.campsite.id}
+                    />
                 </div>
             </div>
         );
@@ -95,8 +99,7 @@ class CommentForm extends React.Component {
     
     handleSubmit(values) {
         this.toggleModal();
-        console.log('Current State is: ' + JSON.stringify(values));
-        alert('Current State is: ' + JSON.stringify(values));
+        this.props.addComment(this.props.campsiteId, values.rating, values.author, values.text);
     }
 
     render() {
