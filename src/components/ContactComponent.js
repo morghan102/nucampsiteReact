@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Breadcrumb, BreadcrumbItem, Button, Label, Col, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { Control , LocalForm, Errors } from 'react-redux-form';
+import { Control, LocalForm, Errors } from 'react-redux-form';
 
 // validation logic
 const required = val => val && val.length;
 const maxLength = len => val => !val || (val.length <= len);
-                    // that is a curried function
+// that is a curried function
 const minLength = len => val => val && (val.length >= len);
 const isNumber = val => !isNaN(+val);
 const validEmail = val => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val);
@@ -33,7 +33,7 @@ class Contact extends Component {
                 email: false
             }
         };
-// removed to use redux
+        // removed to use redux
         // this.handleInputChange = this.handleInputChange.bind(this);
         // so we can use the "this" inside that inchange method and have it pt to the right object
 
@@ -43,7 +43,7 @@ class Contact extends Component {
     }
 
 
-// removed to use redux :(
+    // removed to use redux :(
     // validate(firstName, lastName, phoneNum, email) {
 
     //     const errors = {
@@ -82,46 +82,46 @@ class Contact extends Component {
     // }
 
 
-// removed to use redux
-//     handleBlur = (field) => () => {
-// // dont need to use .bind bc its an arrow func and its bound w/o usingthat method
-//         this.setState({
-//             touched: {...this.state.touched, [field]: true}
-//             // spreads it out so we can access the entire obj, then we change just the touched state
-//         });
-//     }
+    // removed to use redux
+    //     handleBlur = (field) => () => {
+    // // dont need to use .bind bc its an arrow func and its bound w/o usingthat method
+    //         this.setState({
+    //             touched: {...this.state.touched, [field]: true}
+    //             // spreads it out so we can access the entire obj, then we change just the touched state
+    //         });
+    //     }
 
-//     // handles changes of form eles
-//     handleInputChange(event) {
-//         const target = event.target;
-//         const name = target.name;
-//         const value = target.type === 'checkbox' ? target.checked : target.value;
+    //     // handles changes of form eles
+    //     handleInputChange(event) {
+    //         const target = event.target;
+    //         const name = target.name;
+    //         const value = target.type === 'checkbox' ? target.checked : target.value;
 
-//         this.setState({
-//             [name]: value
-//             // ~3min in - this is the same as the "value" defined above... but i dont get why this works
-//             // now need to bind the reference to the "this" keyword for this method in the class constructor
-//         })
-//     }
+    //         this.setState({
+    //             [name]: value
+    //             // ~3min in - this is the same as the "value" defined above... but i dont get why this works
+    //             // now need to bind the reference to the "this" keyword for this method in the class constructor
+    //         })
+    //     }
 
-       // handles changes of form changes (idk???)
-       handleSubmit(values) {
+    // handles changes of form changes (idk???)
+    handleSubmit(values) {
         console.log("Current state is: " + JSON.stringify(values));    //    global method that makes a string from an obj
         alert("Current state is: " + JSON.stringify(values));
 
-            // react-redux form will handle this now
-            // event.preventDefault();  // this prevents the page from refreshing after the form is submitted   
-        }
+        // react-redux form will handle this now
+        // event.preventDefault();  // this prevents the page from refreshing after the form is submitted   
+    }
 
     render() {
-// removed to use redux
+        // removed to use redux
         // const errors = this.validate(this.state.firstName, this.state.lastName, this.state.phoneNum, this.state.email);
 
         return (
             <div className="container">
                 <div className="row">
                     <div className="col">
-                    <Breadcrumb>
+                        <Breadcrumb>
                             <BreadcrumbItem><Link to="/home">Home</Link></BreadcrumbItem>
                             <BreadcrumbItem active>Contact Us</BreadcrumbItem>
                         </Breadcrumb>
@@ -151,14 +151,14 @@ class Contact extends Component {
                         <hr />
                     </div>
                     <div className="col-md-10">
-                    <LocalForm onSubmit={values => this.handleSubmit(values)}>
-            {/* and the entire form gets an onSusbmit event handler set to the method we defined */}
-            <Row className="form-group">
+                        <LocalForm onSubmit={values => this.handleSubmit(values)}>
+                            {/* and the entire form gets an onSusbmit event handler set to the method we defined */}
+                            <Row className="form-group">
                                 <Label htmlFor="firstName" md={2}>First Name</Label>
                                 <Col md={10}>
-                                    <Control.text 
-                                        model=".firstName" 
-                                        id="firstName" 
+                                    <Control.text
+                                        model=".firstName"
+                                        id="firstName"
                                         name="firstName"
                                         placeholder="First Name"
                                         className="form-control"
@@ -167,29 +167,29 @@ class Contact extends Component {
                                             minLength: minLength(2),
                                             maxLength: maxLength(15)
                                         }}
-// removed for redux
+                                    // removed for redux
 
-            //                             value={this.state.firstName}
-            //                             invalid={errors.firstName}
-            //                             // I dont totally u/s why we need the invalid method... she said if thereis an error message, the errors will eval to true and otherwose return nothing
-            // to make this controlled, we have to set the value (in handeinputchange) to the state property we defied b4 to hold this input
-    // (whatever attribute it is correspnding to above)
+                                    //                             value={this.state.firstName}
+                                    //                             invalid={errors.firstName}
+                                    //                             // I dont totally u/s why we need the invalid method... she said if thereis an error message, the errors will eval to true and otherwose return nothing
+                                    // to make this controlled, we have to set the value (in handeinputchange) to the state property we defied b4 to hold this input
+                                    // (whatever attribute it is correspnding to above)
 
-            //                             onBlur={this.handleBlur("firstName")}
-            // // this is for tracking the touched state. if user clicks in and then out it triggers this
-            //                             onChange={this.handleInputChange} 
-                                />
-                                <Errors
-                                    className="text-danger"
-                                    model=".firstName"// just needs to match the model of the corresponding control comp
-                                    show="touched"// will only show error messages if the field is touched by the user. Easy!, it's already set up for us
-                                    component="div"// tells it to show error messages in a div
-                                    messages={{
-                                        required: 'Required',
-                                        minLength: 'Must be at least 2 chars.',
-                                        maxLength: 'Must be 15 chars of less.'
-                                    }} 
-                                />                 
+                                    //                             onBlur={this.handleBlur("firstName")}
+                                    // // this is for tracking the touched state. if user clicks in and then out it triggers this
+                                    //                             onChange={this.handleInputChange} 
+                                    />
+                                    <Errors
+                                        className="text-danger"
+                                        model=".firstName"// just needs to match the model of the corresponding control comp
+                                        show="touched"// will only show error messages if the field is touched by the user. Easy!, it's already set up for us
+                                        component="div"// tells it to show error messages in a div
+                                        messages={{
+                                            required: 'Required',
+                                            minLength: 'Must be at least 2 chars.',
+                                            maxLength: 'Must be 15 chars of less.'
+                                        }}
+                                    />
                                 </Col>
                             </Row>
                             <Row className="form-group">
@@ -205,16 +205,16 @@ class Contact extends Component {
                                         }}
                                     />
                                     <Errors
-                                    className="text-danger"
-                                    model=".lastName"// just needs to match the model of the corresponding control comp
-                                    show="touched"// will only show error messages if the field is touched by the user. Easy!, it's already set up for us
-                                    component="div"// tells it to show error messages in a div
-                                    messages={{
-                                        required: 'Required',
-                                        minLength: 'Must be at least 2 chars.',
-                                        maxLength: 'Must be 15 chars of less.'
-                                    }} 
-                                />  
+                                        className="text-danger"
+                                        model=".lastName"// just needs to match the model of the corresponding control comp
+                                        show="touched"// will only show error messages if the field is touched by the user. Easy!, it's already set up for us
+                                        component="div"// tells it to show error messages in a div
+                                        messages={{
+                                            required: 'Required',
+                                            minLength: 'Must be at least 2 chars.',
+                                            maxLength: 'Must be 15 chars of less.'
+                                        }}
+                                    />
                                 </Col>
                             </Row>
                             <Row className="form-group">
@@ -231,17 +231,17 @@ class Contact extends Component {
                                         }}
                                     />
                                     <Errors
-                                    className="text-danger"
-                                    model=".phoneNum"// just needs to match the model of the corresponding control comp
-                                    show="touched"// will only show error messages if the field is touched by the user. Easy!, it's already set up for us
-                                    component="div"// tells it to show error messages in a div
-                                    messages={{
-                                        required: 'Required',
-                                        minLength: 'Must be at least 10 chars.',
-                                        maxLength: 'Must be 15 chars or less.',
-                                        isNumber: 'Must be a number.'
-                                    }} 
-                                />  
+                                        className="text-danger"
+                                        model=".phoneNum"// just needs to match the model of the corresponding control comp
+                                        show="touched"// will only show error messages if the field is touched by the user. Easy!, it's already set up for us
+                                        component="div"// tells it to show error messages in a div
+                                        messages={{
+                                            required: 'Required',
+                                            minLength: 'Must be at least 10 chars.',
+                                            maxLength: 'Must be 15 chars or less.',
+                                            isNumber: 'Must be a number.'
+                                        }}
+                                    />
                                 </Col>
                             </Row>
                             <Row className="form-group">
@@ -256,19 +256,19 @@ class Contact extends Component {
                                         }}
                                     />
                                     <Errors
-                                    className="text-danger"
-                                    model=".email"// just needs to match the model of the corresponding control comp
-                                    show="touched"// will only show error messages if the field is touched by the user. Easy!, it's already set up for us
-                                    component="div"// tells it to show error messages in a div
-                                    messages={{
-                                        required: 'Required',
-                                        validEmail: 'Invalid email.'
-                                    }} 
-                                />  
+                                        className="text-danger"
+                                        model=".email"// just needs to match the model of the corresponding control comp
+                                        show="touched"// will only show error messages if the field is touched by the user. Easy!, it's already set up for us
+                                        component="div"// tells it to show error messages in a div
+                                        messages={{
+                                            required: 'Required',
+                                            validEmail: 'Invalid email.'
+                                        }}
+                                    />
                                 </Col>
                             </Row>
                             <Row className="form-group">
-                                <Col md={{size: 4, offset: 2}}>
+                                <Col md={{ size: 4, offset: 2 }}>
                                     <div className="form-check">
                                         <Label check>
                                             <Control.checkbox
@@ -287,7 +287,7 @@ class Contact extends Component {
                                         <option>By Email</option>
                                     </Control.select>
                                 </Col>
-                            </Row>                            
+                            </Row>
                             <Row className="form-group">
                                 <Label htmlFor="feedback" md={2}>Your Feedback</Label>
                                 <Col md={10}>
@@ -298,7 +298,7 @@ class Contact extends Component {
                                 </Col>
                             </Row>
                             <Row className="form-group">
-                                <Col md={{size: 10, offset: 2}}>
+                                <Col md={{ size: 10, offset: 2 }}>
                                     <Button type="submit" color="primary">
                                         Send Feedback
                                     </Button>
