@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import Contact from './ContactComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
 import About from './AboutComponent';
-import { addComment } from '../redux/ActionCreators';
+import { addComment, fetchCampsites } from '../redux/ActionCreators';
 // import { CAMPSITES } from '../shared/campsites';
 // bc all app data is being stored in the redux store. there were a few others but i removed for readability
 
@@ -24,7 +24,9 @@ const mapStateToProps = state => {   // state will be store in this 4 redux
 };
 
 const mapDispatchToProps = {
-  addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text))
+  addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),
+  // FC is available to maincomp as props. we'll want to fetch that data as soon as mc is rendered to the DOM
+  fetchCampsites: () => (fetchCampsites())
 };
 // bc if redux, what all used to be state will be props
 class Main extends Component {
@@ -36,13 +38,26 @@ class Main extends Component {
   // }
   // bc we have the redux store going now we dont eed the constructor, im guessing bc that data isnt being passed in here anymore
 
+
+
+  // built in react method, one of lifecycle methods. 
+  // every react comp has a LC,which is that there are certain pts where it gets created & inserted into dom, u/d, and removed from dom.
+  // render method is another, plus MMMOOOOORREEE
+  componentDidMount(){
+    this.props.fetchCampsites();
+  }
+  // cdm called right after react comp is created and inserted into dom. safe place to start fetching campsite data
+
   render() {
 
     const HomePage = () => {
       // this is an arrow func bc of the nature ofthe this kywrd inside arrow functs. in arrows, this is inherited from the 'this' from their parent scope
       return (
         <Home 
-          campsite={this.props.campsites.filter(campsite => campsite.featured)[0]}
+          campsite={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]}
+          campsitesLoading={this.props.campsites.isLoading}
+          campsitesErrMess={this.props.campsites.errMess}
+          
           promotion={this.props.promotions.filter(promotion => promotion.featured)[0]}
           partner={this.props.partners.filter(partner => partner.featured)[0]}        
         />
@@ -52,7 +67,10 @@ class Main extends Component {
     const CampsiteWithId = ({match}) => {
       return (
         <CampsiteInfo 
-          campsite={this.props.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}
+          campsite={this.props.campsites.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}
+          campsitesLoading={this.props.campsites.isLoading}
+          campsitesErrMess={this.props.campsites.errMess}
+
           comments={this.props.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)}
           addComment={this.props.addComment}
           />
