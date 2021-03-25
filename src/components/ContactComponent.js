@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Breadcrumb, BreadcrumbItem, Button, Label, Col, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { Control, LocalForm, Errors } from 'react-redux-form';
+import { Control, Form, Errors, actions } from 'react-redux-form';
 
 // validation logic
 const required = val => val && val.length;
@@ -108,6 +108,7 @@ class Contact extends Component {
     handleSubmit(values) {
         console.log("Current state is: " + JSON.stringify(values));    //    global method that makes a string from an obj
         alert("Current state is: " + JSON.stringify(values));
+        this.props.resetFeedbackForm();
 
         // react-redux form will handle this now
         // event.preventDefault();  // this prevents the page from refreshing after the form is submitted   
@@ -151,7 +152,8 @@ class Contact extends Component {
                         <hr />
                     </div>
                     <div className="col-md-10">
-                        <LocalForm onSubmit={values => this.handleSubmit(values)}>
+                        {/* has to have a model now to connect it to the state in redux store */}
+                        <Form model="feedbackForm" onSubmit={values => this.handleSubmit(values)}>
                             {/* and the entire form gets an onSusbmit event handler set to the method we defined */}
                             <Row className="form-group">
                                 <Label htmlFor="firstName" md={2}>First Name</Label>
@@ -304,7 +306,7 @@ class Contact extends Component {
                                     </Button>
                                 </Col>
                             </Row>
-                        </LocalForm>
+                        </Form>
                     </div>
                 </div>
             </div>

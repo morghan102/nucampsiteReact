@@ -5,6 +5,7 @@ import Footer from './FooterComponent';
 import Home from './HomeComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { actions } from 'react-redux-form';
 import Contact from './ContactComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
 import About from './AboutComponent';
@@ -26,7 +27,8 @@ const mapStateToProps = state => {   // state will be store in this 4 redux
 const mapDispatchToProps = {
   addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),
   // FC is available to maincomp as props. we'll want to fetch that data as soon as mc is rendered to the DOM
-  fetchCampsites: () => (fetchCampsites())
+  fetchCampsites: () => (fetchCampsites()),
+  resetFeedbackForm: () => (actions.reset('feedbackForm'))
 };
 // bc if redux, what all used to be state will be props
 class Main extends Component {
@@ -57,7 +59,7 @@ class Main extends Component {
           campsite={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]}
           campsitesLoading={this.props.campsites.isLoading}
           campsitesErrMess={this.props.campsites.errMess}
-          
+
           promotion={this.props.promotions.filter(promotion => promotion.featured)[0]}
           partner={this.props.partners.filter(partner => partner.featured)[0]}        
         />
@@ -87,7 +89,7 @@ class Main extends Component {
           {/* this gives a route to the directory */}
           <Route path='/directory/:campsiteId' component={CampsiteWithId} />
           {/* colon tells it that after that will be a param */}
-          <Route exact path='/contactus' component={Contact} />
+          <Route exact path='/contactus' render={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
           <Route exact path='/aboutus' render={() => <About partners={this.props.partners} />} />
           {/* render bc there is partner info in the about componenet that has t be passed to it */}
           <Redirect to='/home' />
