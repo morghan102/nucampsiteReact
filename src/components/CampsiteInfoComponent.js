@@ -5,45 +5,60 @@ import { LocalForm, Control, Errors } from 'react-redux-form';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
 
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
+
+
 
 // validation logic
 const minLength = len => val => val && (val.length >= len);
 const maxLength = len => val => !val || (val.length <= len);
 
-function RenderCampsite({campsite}) {
-        return(
-            <div className="col-md-5 m-1">
+function RenderCampsite({ campsite }) {
+    return (
+        <div className="col-md-5 m-1">
+            <FadeTransform
+                in
+                transformProps={{
+                    exitTransform: 'scale(.5) translateY(50%)'
+                }}
+            >
                 <Card>
                     <CardImg top src={baseUrl + campsite.image} alt={campsite.name} />
                     <CardBody>
                         <CardText>{campsite.description}</CardText>
                     </CardBody>
                 </Card>
-            </div>
-        );
-    };
+            </FadeTransform>
+        </div>
+    );
+};
 
-    function RenderComments({comments, postComment, campsiteId}) {
-        if (comments) {
-            return(
-                <div className="col-md-5 m-1">
-                    <h4>Comments</h4>
+function RenderComments({ comments, postComment, campsiteId }) {
+    if (comments) {
+        return (
+            <div className="col-md-5 m-1">
+                <h4>Comments</h4>
+                <Stagger in>
                     {comments.map(comm => {
                         return (
-                        <div key={comm.id}>
-                            <p>{comm.text} <br />
-                                -- {comm.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comm.date)))}
-                            </p>
-                        </div>
+                            // the key has to go on the highest level attr
+                            <Fade in key={comm.id}>
+                                <div >
+                                    <p>{comm.text} <br />
+                                    -- {comm.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comm.date)))}
+                                    </p>
+                                </div>
+                            </Fade>
                         );
-                        }
-                        )}
-                    <CommentForm campsiteId={campsiteId} postComment={postComment} />
-                </div>
-            );
-        }
-        return <div/>
-    };
+                    }
+                    )}
+                </Stagger>
+                <CommentForm campsiteId={campsiteId} postComment={postComment} />
+            </div>
+        );
+    }
+    return <div />
+};
 
 function CampsiteInfo(props) {
     if (props.isLoading) {
@@ -67,25 +82,25 @@ function CampsiteInfo(props) {
         );
     }
     if (props.campsite) {
-        return(
+        return (
             <div className="container">
                 <div className="row">
-                <div className="col">
-                    <Breadcrumb>
-                        <BreadcrumbItem><Link to="/directory">Directory</Link></BreadcrumbItem>
-                        <BreadcrumbItem active>{props.campsite.name}</BreadcrumbItem>
-                    </Breadcrumb>
-                    <h2>{props.campsite.name}</h2>
-                    <hr />
+                    <div className="col">
+                        <Breadcrumb>
+                            <BreadcrumbItem><Link to="/directory">Directory</Link></BreadcrumbItem>
+                            <BreadcrumbItem active>{props.campsite.name}</BreadcrumbItem>
+                        </Breadcrumb>
+                        <h2>{props.campsite.name}</h2>
+                        <hr />
+                    </div>
                 </div>
-            </div>
 
 
                 <div className="row">
                     {/* {renderCampsite(this.props.campsite)} this gets altered bc its no longer a func of a class component*/}
                     <RenderCampsite campsite={props.campsite} />
-                    <RenderComments 
-                        comments={props.comments} 
+                    <RenderComments
+                        comments={props.comments}
                         postComment={props.postComment}
                         campsiteId={props.campsite.id}
                     />
@@ -93,8 +108,8 @@ function CampsiteInfo(props) {
             </div>
         );
     } else {
-        return(
-        <div />
+        return (
+            <div />
         );
     }
 };
@@ -103,7 +118,7 @@ function CampsiteInfo(props) {
 class CommentForm extends React.Component {
 
     constructor(props) {
-        super(props);        
+        super(props);
         this.state = {
             isModalOpen: false,
             touched: {
@@ -119,7 +134,7 @@ class CommentForm extends React.Component {
             isModalOpen: !this.state.isModalOpen
         });
     }
-    
+
     handleSubmit(values) {
         this.toggleModal();
         this.props.postComment(this.props.campsiteId, values.rating, values.author, values.text);
@@ -135,12 +150,12 @@ class CommentForm extends React.Component {
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
                     <ModalBody>
-                    <LocalForm onSubmit={values => this.handleSubmit(values)}>
+                        <LocalForm onSubmit={values => this.handleSubmit(values)}>
                             <div className="form-group">
                                 <Label htmlFor="rating">Rating</Label>
-                                <Control.select 
-                                    model=".rating" 
-                                    id="rating" 
+                                <Control.select
+                                    model=".rating"
+                                    id="rating"
                                     name="rating"
                                     className="form-control">
                                     <option>1</option>
@@ -152,9 +167,9 @@ class CommentForm extends React.Component {
                             </div>
                             <div className="form-group">
                                 <Label htmlFor="author">Your Name</Label>
-                                <Control.text 
-                                    model=".author" 
-                                    id="author" 
+                                <Control.text
+                                    model=".author"
+                                    id="author"
                                     name="author"
                                     placeholder="Your Name"
                                     className="form-control"
@@ -163,7 +178,7 @@ class CommentForm extends React.Component {
                                         maxLength: maxLength(15)
                                     }}
                                 />
-                                <Errors 
+                                <Errors
                                     className="text-danger"
                                     model=".author"
                                     show="touched"
@@ -183,7 +198,7 @@ class CommentForm extends React.Component {
                                         minLength: minLength(10)
                                     }}
                                 />
-                                <Errors 
+                                <Errors
                                     className="text-danger"
                                     model=".text"
                                     show="touched"
