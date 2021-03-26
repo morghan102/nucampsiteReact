@@ -9,7 +9,7 @@ import { actions } from 'react-redux-form';
 import Contact from './ContactComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
 import About from './AboutComponent';
-import { addComment, fetchCampsites } from '../redux/ActionCreators';
+import { addComment, fetchCampsites, fetchComments, fetchPromotions } from '../redux/ActionCreators';
 // import { CAMPSITES } from '../shared/campsites';
 // bc all app data is being stored in the redux store. there were a few others but i removed for readability
 
@@ -28,7 +28,11 @@ const mapDispatchToProps = {
   addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),
   // FC is available to maincomp as props. we'll want to fetch that data as soon as mc is rendered to the DOM
   fetchCampsites: () => (fetchCampsites()),
-  resetFeedbackForm: () => (actions.reset('feedbackForm'))
+  resetFeedbackForm: () => (actions.reset('feedbackForm')),
+  // these last 2 have to do w fetch. 
+  // setting up mdtp like thsi makes it easy to dispatch actions to reduxStore
+  fetchComments: () => (fetchComments()),
+  fetchPromotions: () => (fetchPromotions())
 };
 // bc if redux, what all used to be state will be props
 class Main extends Component {
@@ -47,6 +51,9 @@ class Main extends Component {
   // render method is another, plus MMMOOOOORREEE
   componentDidMount(){
     this.props.fetchCampsites();
+    this.props.fetchComments();
+    this.props.fetchPromotions();
+    // adding those above 2 makes it so comm&proms are fetched when the component is moutned
   }
   // cdm called right after react comp is created and inserted into dom. safe place to start fetching campsite data
 
@@ -60,7 +67,9 @@ class Main extends Component {
           campsitesLoading={this.props.campsites.isLoading}
           campsitesErrMess={this.props.campsites.errMess}
 
-          promotion={this.props.promotions.filter(promotion => promotion.featured)[0]}
+          promotion={this.props.promotions.promotions.filter(promotion => promotion.featured)[0]}
+          promotionLoading={this.props.promotions.isLoading}
+          promoitonErrMess={this.props.promotions.errMess}
           partner={this.props.partners.filter(partner => partner.featured)[0]}        
         />
       );
@@ -70,10 +79,11 @@ class Main extends Component {
       return (
         <CampsiteInfo 
           campsite={this.props.campsites.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}
-          campsitesLoading={this.props.campsites.isLoading}
-          campsitesErrMess={this.props.campsites.errMess}
+          isLoading={this.props.campsites.isLoading}
+          ErrMess={this.props.campsites.errMess}
 
-          comments={this.props.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)}
+          commentsErrMess={this.props.comments.ErrMess}
+          comments={this.props.comments.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)}
           addComment={this.props.addComment}
           />
       );
