@@ -13,6 +13,8 @@ import { postComment, fetchCampsites, fetchComments, fetchPromotions } from '../
 // import { CAMPSITES } from '../shared/campsites';
 // bc all app data is being stored in the redux store. there were a few others but i removed for readability
 
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+
 
 const mapStateToProps = state => {   // state will be store in this 4 redux
   return {
@@ -92,19 +94,23 @@ class Main extends Component {
     return (
       <div>
         <Header />
-        <Switch>
-          <Route path='/home' component={HomePage} />
-          {/* this routes any traffic trying to go to home to the homepage component */}
-          <Route exact path='/directory' render={() => <Directory campsites={this.props.campsites} />} />
-          {/* this gives a route to the directory */}
-          <Route path='/directory/:campsiteId' component={CampsiteWithId} />
-          {/* colon tells it that after that will be a param */}
-          <Route exact path='/contactus' render={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
-          <Route exact path='/aboutus' render={() => <About partners={this.props.partners} />} />
-          {/* render bc there is partner info in the about componenet that has t be passed to it */}
-          <Redirect to='/home' />
-          {/* the redir is a default like a def in a js switch statement */}
-        </Switch>
+        <TransitionGroup>
+          <CSSTransition key={this.props.location.key} classNames="page" timeout={300} >
+            <Switch>
+              <Route path='/home' component={HomePage} />
+              {/* this routes any traffic trying to go to home to the homepage component */}
+              <Route exact path='/directory' render={() => <Directory campsites={this.props.campsites} />} />
+              {/* this gives a route to the directory */}
+              <Route path='/directory/:campsiteId' component={CampsiteWithId} />
+              {/* colon tells it that after that will be a param */}
+              <Route exact path='/contactus' render={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
+              <Route exact path='/aboutus' render={() => <About partners={this.props.partners} />} />
+              {/* render bc there is partner info in the about componenet that has t be passed to it */}
+              <Redirect to='/home' />
+              {/* the redir is a default like a def in a js switch statement */}
+            </Switch>
+          </CSSTransition>
+        </TransitionGroup>
         <Footer />
       </div>
     );
