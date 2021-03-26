@@ -9,7 +9,7 @@ import { actions } from 'react-redux-form';
 import Contact from './ContactComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
 import About from './AboutComponent';
-import { addComment, fetchCampsites, fetchComments, fetchPromotions } from '../redux/ActionCreators';
+import { postComment, fetchCampsites, fetchComments, fetchPromotions } from '../redux/ActionCreators';
 // import { CAMPSITES } from '../shared/campsites';
 // bc all app data is being stored in the redux store. there were a few others but i removed for readability
 
@@ -25,7 +25,7 @@ const mapStateToProps = state => {   // state will be store in this 4 redux
 };
 
 const mapDispatchToProps = {
-  addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),
+  postComment: (campsiteId, rating, author, text) => (postComment(campsiteId, rating, author, text)),
   // FC is available to maincomp as props. we'll want to fetch that data as soon as mc is rendered to the DOM
   fetchCampsites: () => (fetchCampsites()),
   resetFeedbackForm: () => (actions.reset('feedbackForm')),
@@ -84,7 +84,7 @@ class Main extends Component {
 
           commentsErrMess={this.props.comments.ErrMess}
           comments={this.props.comments.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)}
-          addComment={this.props.addComment}
+          postComment={this.props.postComment}
           />
       );
     };

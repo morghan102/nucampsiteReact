@@ -14,8 +14,10 @@ export const Comments = (state = { errMess: null, comments: []}, action) => {
 
         case ActionTypes.ADD_COMMENT:
             const comment = action.payload;
-            comment.id = state.comments.length;
-            comment.date = new Date().toISOString();
+            // json server does this autp
+            // comment.id = state.comments.length;
+            // and the action creator adds the date for us
+            // comment.date = new Date().toISOString();
             return {...state, comments: state.comments.concat(comment)};
 
         default:

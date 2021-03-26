@@ -2,16 +2,6 @@ import * as ActionTypes from './ActionTypes';
 // the * is a wildcard, lets us  import all named exports from actiontypes.js from there at once
 import { baseUrl } from '../shared/baseUrl';
 
-export const addComment = (campsiteId, rating, author, text) => ({
-    type: ActionTypes.ADD_COMMENT,
-    payload: {
-        campsiteId,
-        rating,
-        author,
-        text
-        // in es6, shorthand prop names. this is the same as campsiteId: campsiteId, etc. If the 2 are the same can do like this.
-    }
-});
 
 export const fetchCampsites = () => dispatch => {
     // stores dispatch method passed in (thunk allows this)
@@ -96,6 +86,48 @@ export const addComments = comments => ({
     payload: comments
 });
 
+// u/d local redux store
+export const addComment = comment => ({
+    type: ActionTypes.ADD_COMMENT,
+    payload: comment
+});
+
+// this handles asynch calls to fetch & posts new comm to server
+export const postComment = (campsiteId, rating, author, text) => dispatch => {
+    const newComment = {
+        campsiteId,
+        rating,
+        author,
+        text
+        // in es6, shorthand prop names. this is the same as campsiteId: campsiteId, etc. If the 2 are the same can do like this.
+    };
+    newComment.date = new Date().toISOString();
+
+    return fetch(baseUrl + 'comments', {
+            method: "POST",
+            body: JSON.stringify(newComment),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response;
+            } else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response = response;
+                throw error;
+            }
+        },
+        error => { throw error; }
+        )
+        .then(response => response.json())
+        .then(response => dispatch(addComment(response)))
+        .catch(error => {
+            console.log('post comment', error.message);
+            alert('Your comment could not be posted\nError:' + error.message);
+        });
+};
 
 export const fetchPromotions = () => dispatch => {
     dispatch(promotionsLoading());
