@@ -3,6 +3,8 @@ import { Nav, NavbarToggler, Collapse, NavItem, Navbar, NavbarBrand, Jumbotron,
 Button, Modal, ModalHeader, ModalBody,
 Form, FormGroup, Input, Label } from 'reactstrap';
 import { NavLink } from 'react-router-dom';
+import { baseUrl } from '../shared/baseUrl';
+// in order to get the lofo to show up I might need to play around w how to link it. not working after i removed assets out of this dir in order to rely on json server
 
 class Header extends Component {
     
@@ -54,7 +56,7 @@ class Header extends Component {
                 </Jumbotron>
                 <Navbar dark sticky="top" expand="md"> 
                     <div className="container">
-                        <NavbarBrand className="mr-auto" href="/"><img src="/assets/images/logo.png" height="30" width="30" alt="Nucamp logo" /></NavbarBrand>
+                        <NavbarBrand className="mr-auto" href="/home"><img src="/assets/images/logo.png" height="30" width="30" alt="Nucamp logo" /></NavbarBrand>
                         <NavbarToggler onClick={this.toggleNav} />
                         <Collapse isOpen={this.state.isNavOpen} navbar>
                             <Nav navbar>

@@ -106,10 +106,11 @@ class Contact extends Component {
 
     // handles changes of form changes (idk???)
     handleSubmit(values) {
-        console.log("Current state is: " + JSON.stringify(values));    //    global method that makes a string from an obj
-        alert("Current state is: " + JSON.stringify(values));
+        // console.log("Current state is: " + JSON.stringify(values));    //    global method that makes a string from an obj
+        // alert("Current state is: " + JSON.stringify(values));
         this.props.resetFeedbackForm();
-
+        this.props.postFeedback(values); // sends to the server
+        
         // react-redux form will handle this now
         // event.preventDefault();  // this prevents the page from refreshing after the form is submitted   
     }

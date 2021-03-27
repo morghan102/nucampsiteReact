@@ -9,7 +9,7 @@ import { actions } from 'react-redux-form';
 import Contact from './ContactComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
 import About from './AboutComponent';
-import { postComment, fetchCampsites, fetchComments, fetchPromotions } from '../redux/ActionCreators';
+import { postComment, fetchCampsites, fetchComments, fetchPromotions, fetchPartners, postFeedback } from '../redux/ActionCreators';
 // import { CAMPSITES } from '../shared/campsites';
 // bc all app data is being stored in the redux store. there were a few others but i removed for readability
 
@@ -34,7 +34,11 @@ const mapDispatchToProps = {
   // these last 2 have to do w fetch. 
   // setting up mdtp like thsi makes it easy to dispatch actions to reduxStore
   fetchComments: () => (fetchComments()),
-  fetchPromotions: () => (fetchPromotions())
+  fetchPromotions: () => (fetchPromotions()),
+  fetchPartners: () => (fetchPartners()),
+
+  postFeedback: (feedback) => (postFeedback(feedback))
+
 };
 // bc if redux, what all used to be state will be props
 class Main extends Component {
@@ -55,6 +59,7 @@ class Main extends Component {
     this.props.fetchCampsites();
     this.props.fetchComments();
     this.props.fetchPromotions();
+    this.props.fetchPartners();
     // adding those above 2 makes it so comm&proms are fetched when the component is moutned
   }
   // cdm called right after react comp is created and inserted into dom. safe place to start fetching campsite data
@@ -72,7 +77,10 @@ class Main extends Component {
           promotion={this.props.promotions.promotions.filter(promotion => promotion.featured)[0]}
           promotionLoading={this.props.promotions.isLoading}
           promoitonErrMess={this.props.promotions.errMess}
-          partner={this.props.partners.filter(partner => partner.featured)[0]}        
+
+          partner={this.props.partners.partners.filter(partner => partner.featured)[0]}
+          partnersLoading={this.props.partners.isLoading}
+          partnersErrMess={this.props.partners.errMess}
         />
       );
     };
@@ -91,7 +99,7 @@ class Main extends Component {
       );
     };
 
-    return (
+    return ( 
       <div>
         <Header />
         <TransitionGroup>
@@ -103,7 +111,7 @@ class Main extends Component {
               {/* this gives a route to the directory */}
               <Route path='/directory/:campsiteId' component={CampsiteWithId} />
               {/* colon tells it that after that will be a param */}
-              <Route exact path='/contactus' render={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
+              <Route exact path='/contactus' render={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} postFeedback={this.props.postFeedback} />} />
               <Route exact path='/aboutus' render={() => <About partners={this.props.partners} />} />
               {/* render bc there is partner info in the about componenet that has t be passed to it */}
               <Redirect to='/home' />
